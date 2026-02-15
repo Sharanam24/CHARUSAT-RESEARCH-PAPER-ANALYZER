@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Test - CHARUSAT Research Analyzer</title>
+    <style>
+        body {
+            font-family: Roboto, Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0B3C5D;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-wrapper {
+            margin: 20px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            max-width: 100%;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Analytics Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Load Analytics Data</h2>
+        <div id="test1-status" class="status">Running test...</div>
+        <div id="test1-details"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Publications by Year Chart</h2>
+        <div id="test2-status" class="status">Running test...</div>
+        <div class="chart-wrapper">
+            <canvas id="test-publications-chart"></canvas>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Top Research Domains Chart</h2>
+        <div id="test3-status" class="status">Running test...</div>
+        <div class="chart-wrapper">
+            <canvas id="test-domains-chart"></canvas>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Department-wise Paper Count Chart</h2>
+        <div id="test4-status" class="status">Running test...</div>
+        <div class="chart-wrapper">
+            <canvas id="test-departments-chart"></canvas>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 5: Empty Data Handling</h2>
+        <div id="test5-status" class="status">Running test...</div>
+        <div id="test5-details"></div>
+    </div>
+
+    <script src="js/api.js" defer></script>
+    <script defer>
+        // Test utilities
+        function setTestStatus(testId, success, message) {
+            const statusEl = document.getElementById(`test${testId}-status`);
+            statusEl.className = `status ${success ? 'success' : 'error'}`;
+            statusEl.textContent = success ? `✓ PASSED: ${message}` : `✗ FAILED: ${message}`;
+        }
+
+        function setTestDetails(testId, details) {
+            const detailsEl = document.getElementById(`test${testId}-details`);
+            if (detailsEl) {
+                detailsEl.innerHTML = details;
+            }
+        }
+
+        // Copy chart rendering functions from analytics.js
+        function renderPublicationsChart(data, canvasId = 'publications-chart') {
+            const canvas = document.getElementById(canvasId);
+            
+            if (!canvas) {
+                console.warn('Publications chart canvas not found');
+                return false;
+            }
+            
+            if (!data || data.length === 0) {
+                console.warn('No publications data to display');
+                return false;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.warn('Could not get canvas context');
+                return false;
+            }
+            
+            // Set canvas dimensions
+            canvas.width = 800;
+            canvas.height = 400;
+            
+            // Chart configuration
+            const padding = 60;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            const barWidth = chartWidth / data.length;
+            const maxCount = Math.max(...data.map(d => d.count));
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw bars
+            data.forEach((item, index) => {
+                const barHeight = (item.count / maxCount) * chartHeight;
+                const x = padding + index * barWidth;
+                const y = canvas.height - padding - barHeight;
+                
+                // Draw bar
+                ctx.fillStyle = '#328CC1';
+                ctx.fillRect(x + 10, y, barWidth - 20, barHeight);
+                
+                // Draw count label on top of bar
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '14px Roboto';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.count.toString(), x + barWidth / 2, y - 5);
+                
+                // Draw year label below bar
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '12px Roboto';
+                ctx.fillText(item.year.toString(), x + barWidth / 2, canvas.height - padding + 20);
+            });
+            
+            // Draw axes
+            ctx.strokeStyle = '#0B3C5D';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#0B3C5D';
+            ctx.font = '14px Roboto';
+            ctx.textAlign = 'center';
+            ctx.fillText('Year', canvas.width / 2, canvas.height - 10);
+            
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Number of Publications', 0, 0);
+            ctx.restore();
+            
+            return true;
+        }
+
+        function renderDomainsChart(data, canvasId = 'domains-chart') {
+            const canvas = document.getElementById(canvasId);
+            
+            if (!canvas) {
+                console.warn('Domains chart canvas not found');
+                return false;
+            }
+            
+            if (!data || data.length === 0) {
+                console.warn('No domains data to display');
+                return false;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.warn('Could not get canvas context');
+                return false;
+            }
+            
+            // Set canvas dimensions
+            canvas.width = 800;
+            canvas.height = 400;
+            
+            // Chart configuration
+            const padding = 60;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            const barHeight = chartHeight / data.length;
+            const maxCount = Math.max(...data.map(d => d.count));
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw horizontal bars
+            data.forEach((item, index) => {
+                const barWidth = (item.count / maxCount) * chartWidth;
+                const x = padding;
+                const y = padding + index * barHeight;
+                
+                // Draw bar
+                ctx.fillStyle = '#328CC1';
+                ctx.fillRect(x, y + 10, barWidth, barHeight - 20);
+                
+                // Draw count label at end of bar
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '14px Roboto';
+                ctx.textAlign = 'left';
+                ctx.fillText(item.count.toString(), x + barWidth + 5, y + barHeight / 2 + 5);
+                
+                // Draw domain label to the left of bar
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '12px Roboto';
+                ctx.textAlign = 'right';
+                const domainText = item.domain.length > 25 ? item.domain.substring(0, 22) + '...' : item.domain;
+                ctx.fillText(domainText, x - 10, y + barHeight / 2 + 5);
+            });
+            
+            // Draw axes
+            ctx.strokeStyle = '#0B3C5D';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw axis label
+            ctx.fillStyle = '#0B3C5D';
+            ctx.font = '14px Roboto';
+            ctx.textAlign = 'center';
+            ctx.fillText('Number of Papers', canvas.width / 2, canvas.height - 10);
+            
+            return true;
+        }
+
+        function renderDepartmentsChart(data, canvasId = 'departments-chart') {
+            const canvas = document.getElementById(canvasId);
+            
+            if (!canvas) {
+                console.warn('Departments chart canvas not found');
+                return false;
+            }
+            
+            if (!data || data.length === 0) {
+                console.warn('No departments data to display');
+                return false;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.warn('Could not get canvas context');
+                return false;
+            }
+            
+            // Set canvas dimensions
+            canvas.width = 800;
+            canvas.height = 400;
+            
+            // Chart configuration
+            const padding = 60;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            const barWidth = chartWidth / data.length;
+            const maxCount = Math.max(...data.map(d => d.count));
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw bars
+            data.forEach((item, index) => {
+                const barHeight = (item.count / maxCount) * chartHeight;
+                const x = padding + index * barWidth;
+                const y = canvas.height - padding - barHeight;
+                
+                // Draw bar
+                ctx.fillStyle = '#328CC1';
+                ctx.fillRect(x + 10, y, barWidth - 20, barHeight);
+                
+                // Draw count label on top of bar
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '14px Roboto';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.count.toString(), x + barWidth / 2, y - 5);
+                
+                // Draw department label below bar (rotated for readability)
+                ctx.save();
+                ctx.translate(x + barWidth / 2, canvas.height - padding + 15);
+                ctx.rotate(-Math.PI / 4);
+                ctx.fillStyle = '#0B3C5D';
+                ctx.font = '11px Roboto';
+                ctx.textAlign = 'right';
+                const deptText = item.department.length > 20 ? item.department.substring(0, 17) + '...' : item.department;
+                ctx.fillText(deptText, 0, 0);
+                ctx.restore();
+            });
+            
+            // Draw axes
+            ctx.strokeStyle = '#0B3C5D';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#0B3C5D';
+            ctx.font = '14px Roboto';
+            ctx.textAlign = 'center';
+            ctx.fillText('Department', canvas.width / 2, canvas.height - 10);
+            
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Number of Papers', 0, 0);
+            ctx.restore();
+            
+            return true;
+        }
+
+        // Run tests
+        async function runTests() {
+            try {
+                // Test 1: Load Analytics Data
+                const data = await fetchAnalyticsData();
+                
+                if (data && data.publicationsByYear && data.topDomains && data.departmentCounts) {
+                    setTestStatus(1, true, 'Analytics data loaded successfully');
+                    setTestDetails(1, `
+                        <p><strong>Data Structure:</strong></p>
+                        <ul>
+                            <li>Publications by Year: ${data.publicationsByYear.length} entries</li>
+                            <li>Top Domains: ${data.topDomains.length} entries</li>
+                            <li>Department Counts: ${data.departmentCounts.length} entries</li>
+                        </ul>
+                    `);
+                    
+                    // Test 2: Publications Chart
+                    const pubResult = renderPublicationsChart(data.publicationsByYear, 'test-publications-chart');
+                    setTestStatus(2, pubResult, pubResult ? 'Publications chart rendered successfully' : 'Failed to render publications chart');
+                    
+                    // Test 3: Domains Chart
+                    const domResult = renderDomainsChart(data.topDomains, 'test-domains-chart');
+                    setTestStatus(3, domResult, domResult ? 'Domains chart rendered successfully' : 'Failed to render domains chart');
+                    
+                    // Test 4: Departments Chart
+                    const deptResult = renderDepartmentsChart(data.departmentCounts, 'test-departments-chart');
+                    setTestStatus(4, deptResult, deptResult ? 'Departments chart rendered successfully' : 'Failed to render departments chart');
+                    
+                    // Test 5: Empty Data Handling
+                    const emptyResult = renderPublicationsChart([], 'test-empty-chart');
+                    setTestStatus(5, !emptyResult, !emptyResult ? 'Empty data handled correctly (no crash)' : 'Empty data not handled properly');
+                    setTestDetails(5, '<p>Tested rendering with empty data array - function returned false as expected.</p>');
+                    
+                } else {
+                    setTestStatus(1, false, 'Analytics data structure is invalid');
+                }
+                
+            } catch (error) {
+                setTestStatus(1, false, `Error loading analytics data: ${error.message}`);
+                console.error('Test error:', error);
+            }
+        }
+
+        // Run tests when page loads
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authors Functionality</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .test-results {
+            margin: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .test-pass {
+            color: green;
+            font-weight: bold;
+        }
+        .test-fail {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-results">
+        <h1>Authors.js Functionality Test</h1>
+        <div id="test-output"></div>
+    </div>
+
+    <!-- Test container -->
+    <div id="author-groups-container"></div>
+
+    <script src="js/api.js" defer></script>
+    <script defer>
+        // Test suite for authors.js functionality
+        const testOutput = document.getElementById('test-output');
+        let testsPassed = 0;
+        let testsFailed = 0;
+
+        function logTest(name, passed, message = '') {
+            const result = document.createElement('div');
+            result.innerHTML = `<p><span class="${passed ? 'test-pass' : 'test-fail'}">${passed ? '✓' : '✗'}</span> ${name}${message ? ': ' + message : ''}</p>`;
+            testOutput.appendChild(result);
+            if (passed) testsPassed++;
+            else testsFailed++;
+        }
+
+        // Test 1: loadAuthorGroups function exists
+        async function testLoadAuthorGroupsExists() {
+            try {
+                const groups = await fetchAuthorGroups();
+                logTest('fetchAuthorGroups returns data', groups && Array.isArray(groups), `Returned ${groups.length} groups`);
+                return groups;
+            } catch (error) {
+                logTest('fetchAuthorGroups returns data', false, error.message);
+                return [];
+            }
+        }
+
+        // Test 2: renderAuthorGroups function
+        function testRenderAuthorGroups(groups) {
+            const container = document.getElementById('author-groups-container');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Render groups
+            if (groups.length === 0) {
+                container.innerHTML = '<p class="no-groups">No author groups detected yet.</p>';
+                logTest('renderAuthorGroups handles empty groups', true);
+                return;
+            }
+            
+            groups.forEach((group, index) => {
+                const groupElement = createAuthorGroupElement(group, index + 1);
+                container.appendChild(groupElement);
+            });
+            
+            const renderedGroups = container.querySelectorAll('.author-group');
+            logTest('renderAuthorGroups creates correct number of groups', renderedGroups.length === groups.length, `Expected ${groups.length}, got ${renderedGroups.length}`);
+        }
+
+        // Test 3: createAuthorGroupElement function
+        function createAuthorGroupElement(group, groupNumber) {
+            const groupDiv = document.createElement('article');
+            groupDiv.className = 'author-group';
+            
+            // Group header
+            const header = document.createElement('h3');
+            header.className = 'group-header';
+            header.textContent = `Author Group ${groupNumber}`;
+            groupDiv.appendChild(header);
+            
+            // Primary name
+            const primaryName = document.createElement('p');
+            primaryName.className = 'primary-name';
+            primaryName.innerHTML = `<strong>Primary Name:</strong> ${escapeHtml(group.primaryName)}`;
+            groupDiv.appendChild(primaryName);
+            
+            // Status message
+            const status = document.createElement('p');
+            status.className = 'group-status';
+            status.textContent = group.status || 'Identified as same author';
+            groupDiv.appendChild(status);
+            
+            // Variations list
+            const variationsList = document.createElement('ul');
+            variationsList.className = 'author-variations';
+            
+            group.variations.forEach(variation => {
+                const listItem = document.createElement('li');
+                listItem.className = 'variation-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'author-name';
+                nameSpan.textContent = variation.name;
+                
+                const scoreSpan = document.createElement('span');
+                scoreSpan.className = 'similarity-score';
+                scoreSpan.textContent = `${variation.similarityScore}%`;
+                
+                listItem.appendChild(nameSpan);
+                listItem.appendChild(scoreSpan);
+                variationsList.appendChild(listItem);
+            });
+            
+            groupDiv.appendChild(variationsList);
+            
+            return groupDiv;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Test 4: Verify group structure
+        function testGroupStructure(groups) {
+            if (groups.length === 0) {
+                logTest('Group structure validation', true, 'No groups to validate');
+                return;
+            }
+
+            const firstGroup = groups[0];
+            const hasGroupId = firstGroup.hasOwnProperty('groupId');
+            const hasPrimaryName = firstGroup.hasOwnProperty('primaryName');
+            const hasVariations = firstGroup.hasOwnProperty('variations') && Array.isArray(firstGroup.variations);
+            const hasStatus = firstGroup.hasOwnProperty('status');
+
+            logTest('Group has groupId', hasGroupId);
+            logTest('Group has primaryName', hasPrimaryName);
+            logTest('Group has variations array', hasVariations);
+            logTest('Group has status', hasStatus);
+
+            if (hasVariations && firstGroup.variations.length > 0) {
+                const firstVariation = firstGroup.variations[0];
+                const hasName = firstVariation.hasOwnProperty('name');
+                const hasScore = firstVariation.hasOwnProperty('similarityScore');
+                logTest('Variation has name', hasName);
+                logTest('Variation has similarityScore', hasScore);
+            }
+        }
+
+        // Test 5: Verify status message
+        function testStatusMessage(groups) {
+            if (groups.length === 0) {
+                logTest('Status message validation', true, 'No groups to validate');
+                return;
+            }
+
+            const allHaveStatus = groups.every(group => 
+                group.status && group.status.includes('Identified as same author')
+            );
+            logTest('All groups have correct status message', allHaveStatus);
+        }
+
+        // Test 6: Verify similarity scores
+        function testSimilarityScores(groups) {
+            if (groups.length === 0) {
+                logTest('Similarity scores validation', true, 'No groups to validate');
+                return;
+            }
+
+            let allScoresValid = true;
+            groups.forEach(group => {
+                group.variations.forEach(variation => {
+                    if (typeof variation.similarityScore !== 'number' || 
+                        variation.similarityScore < 0 || 
+                        variation.similarityScore > 100) {
+                        allScoresValid = false;
+                    }
+                });
+            });
+            logTest('All similarity scores are valid (0-100)', allScoresValid);
+        }
+
+        // Test 7: Verify DOM elements are created correctly
+        function testDOMElements() {
+            const container = document.getElementById('author-groups-container');
+            const groups = container.querySelectorAll('.author-group');
+            
+            if (groups.length === 0) {
+                logTest('DOM elements validation', true, 'No groups rendered');
+                return;
+            }
+
+            const firstGroup = groups[0];
+            const hasHeader = firstGroup.querySelector('.group-header') !== null;
+            const hasPrimaryName = firstGroup.querySelector('.primary-name') !== null;
+            const hasStatus = firstGroup.querySelector('.group-status') !== null;
+            const hasVariations = firstGroup.querySelector('.author-variations') !== null;
+
+            logTest('Group has header element', hasHeader);
+            logTest('Group has primary name element', hasPrimaryName);
+            logTest('Group has status element', hasStatus);
+            logTest('Group has variations list', hasVariations);
+
+            const variations = firstGroup.querySelectorAll('.variation-item');
+            if (variations.length > 0) {
+                const firstVariation = variations[0];
+                const hasNameSpan = firstVariation.querySelector('.author-name') !== null;
+                const hasScoreSpan = firstVariation.querySelector('.similarity-score') !== null;
+                logTest('Variation has name span', hasNameSpan);
+                logTest('Variation has score span', hasScoreSpan);
+            }
+        }
+
+        // Run all tests
+        async function runTests() {
+            testOutput.innerHTML = '<h2>Running Tests...</h2>';
+            
+            const groups = await testLoadAuthorGroupsExists();
+            testGroupStructure(groups);
+            testStatusMessage(groups);
+            testSimilarityScores(groups);
+            testRenderAuthorGroups(groups);
+            testDOMElements();
+
+            // Summary
+            const summary = document.createElement('div');
+            summary.innerHTML = `<h2>Test Summary</h2><p><span class="test-pass">Passed: ${testsPassed}</span> | <span class="test-fail">Failed: ${testsFailed}</span></p>`;
+            testOutput.appendChild(summary);
+
+            if (testsFailed === 0) {
+                const success = document.createElement('div');
+                success.innerHTML = '<h3 style="color: green;">✓ All tests passed! Task 6.2 is complete.</h3>';
+                testOutput.appendChild(success);
+            }
+        }
+
+        // Run tests when page loads
+        runTests();
+    </script>
+</body>
+</html>

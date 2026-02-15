@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Papers Functionality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Papers.js Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Filter Dropdowns Population</h2>
+        <div id="test1-result"></div>
+        <div>
+            <label>Year Filter:</label>
+            <select id="year-filter">
+                <option value="">All Years</option>
+            </select>
+        </div>
+        <div>
+            <label>Department Filter:</label>
+            <select id="department-filter">
+                <option value="">All Departments</option>
+            </select>
+        </div>
+        <div>
+            <label>Author Filter:</label>
+            <select id="author-filter">
+                <option value="">All Authors</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Papers Table Rendering</h2>
+        <div id="test2-result"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Authors</th>
+                    <th>Year</th>
+                    <th>Journal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="papers-tbody"></tbody>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Filter Application</h2>
+        <div id="test3-result"></div>
+        <button id="apply-filters">Apply Filters</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Paper Details Display</h2>
+        <div id="test4-result"></div>
+        <div id="paper-details" style="display: none;">
+            <h3 id="detail-title"></h3>
+            <div><strong>Authors:</strong> <span id="detail-authors"></span></div>
+            <div><strong>Year:</strong> <span id="detail-year"></span></div>
+            <div><strong>Journal:</strong> <span id="detail-journal"></span></div>
+            <div><strong>Department:</strong> <span id="detail-department"></span></div>
+            <div id="detail-abstract-row" style="display: none;">
+                <strong>Abstract:</strong>
+                <p id="detail-abstract"></p>
+            </div>
+            <button id="close-details">Close</button>
+        </div>
+    </div>
+
+    <script src="js/api.js" defer></script>
+    <script defer>
+        // Test Suite
+        async function runTests() {
+            console.log('Starting tests...');
+            
+            // Test 1: Check if filter dropdowns can be populated
+            try {
+                const years = await fetchYears();
+                const departments = await fetchDepartments();
+                const authors = await fetchAllAuthors();
+                
+                const yearSelect = document.getElementById('year-filter');
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+                
+                const deptSelect = document.getElementById('department-filter');
+                departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    deptSelect.appendChild(option);
+                });
+                
+                const authorSelect = document.getElementById('author-filter');
+                authors.forEach(author => {
+                    const option = document.createElement('option');
+                    option.value = author.name;
+                    option.textContent = author.name;
+                    authorSelect.appendChild(option);
+                });
+                
+                document.getElementById('test1-result').innerHTML = 
+                    `<div class="test-result pass">✓ PASS: Filters populated successfully (${years.length} years, ${departments.length} departments, ${authors.length} authors)</div>`;
+            } catch (error) {
+                document.getElementById('test1-result').innerHTML = 
+                    `<div class="test-result fail">✗ FAIL: ${error.message}</div>`;
+            }
+            
+            // Test 2: Check if papers table can be rendered
+            try {
+                const papers = await fetchAllPapers();
+                const tbody = document.getElementById('papers-tbody');
+                tbody.innerHTML = '';
+                
+                papers.forEach(paper => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${paper.title}</td>
+                        <td>${paper.authors.join(', ')}</td>
+                        <td>${paper.year}</td>
+                        <td>${paper.journal}</td>
+                        <td><button class="view-btn" data-id="${paper.id}">View</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('test2-result').innerHTML = 
+                    `<div class="test-result pass">✓ PASS: Papers table rendered successfully (${papers.length} papers)</div>`;
+            } catch (error) {
+                document.getElementById('test2-result').innerHTML = 
+                    `<div class="test-result fail">✗ FAIL: ${error.message}</div>`;
+            }
+            
+            // Test 3: Check if filters can be applied
+            try {
+                const filters = {
+                    year: '2023',
+                    department: '',
+                    author: ''
+                };
+                const filteredPapers = await fetchFilteredPapers(filters);
+                
+                document.getElementById('test3-result').innerHTML = 
+                    `<div class="test-result pass">✓ PASS: Filters applied successfully (${filteredPapers.length} papers match year 2023)</div>`;
+            } catch (error) {
+                document.getElementById('test3-result').innerHTML = 
+                    `<div class="test-result fail">✗ FAIL: ${error.message}</div>`;
+            }
+            
+            // Test 4: Check if paper details can be displayed
+            try {
+                const paper = await fetchPaperById('1');
+                if (paper) {
+                    document.getElementById('detail-title').textContent = paper.title;
+                    document.getElementById('detail-authors').textContent = paper.authors.join(', ');
+                    document.getElementById('detail-year').textContent = paper.year;
+                    document.getElementById('detail-journal').textContent = paper.journal;
+                    document.getElementById('detail-department').textContent = paper.department;
+                    
+                    if (paper.abstract) {
+                        document.getElementById('detail-abstract').textContent = paper.abstract;
+                        document.getElementById('detail-abstract-row').style.display = 'block';
+                    }
+                    
+                    document.getElementById('paper-details').style.display = 'block';
+                    
+                    document.getElementById('test4-result').innerHTML = 
+                        `<div class="test-result pass">✓ PASS: Paper details displayed successfully</div>`;
+                } else {
+                    throw new Error('Paper not found');
+                }
+            } catch (error) {
+                document.getElementById('test4-result').innerHTML = 
+                    `<div class="test-result fail">✗ FAIL: ${error.message}</div>`;
+            }
+        }
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

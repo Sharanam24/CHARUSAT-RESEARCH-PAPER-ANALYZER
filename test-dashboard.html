@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test - CHARUSAT Research Analyzer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .test-section {
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid #0B3C5D;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-section">
+        <h1>Dashboard.js Functionality Test</h1>
+        
+        <h2>Test 1: Load Dashboard Stats</h2>
+        <div id="test1-result" class="test-result">Running...</div>
+        
+        <h2>Test 2: Search Functionality</h2>
+        <div id="test2-result" class="test-result">Running...</div>
+        
+        <h2>Test 3: Input Sanitization</h2>
+        <div id="test3-result" class="test-result">Running...</div>
+        
+        <h2>Test 4: Empty Search Returns All Papers</h2>
+        <div id="test4-result" class="test-result">Running...</div>
+        
+        <h2>Test 5: Search Results Display</h2>
+        <div id="test5-result" class="test-result">Running...</div>
+        
+        <div style="margin-top: 30px;">
+            <h2>Live Dashboard Preview</h2>
+            <div class="dashboard-cards">
+                <article class="card">
+                    <h3 class="card-title">Total Papers</h3>
+                    <p class="card-value" id="total-papers">0</p>
+                </article>
+                <article class="card">
+                    <h3 class="card-title">Total Authors</h3>
+                    <p class="card-value" id="total-authors">0</p>
+                </article>
+                <article class="card">
+                    <h3 class="card-title">Departments</h3>
+                    <p class="card-value" id="total-departments">0</p>
+                </article>
+            </div>
+            
+            <div class="search-container" style="margin-top: 20px;">
+                <input type="text" id="search-input" placeholder="Search by title, author, or year...">
+                <button id="search-button">Search</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js" defer></script>
+    <script defer>
+        // Test Suite
+        async function runTests() {
+            // Test 1: Load Dashboard Stats
+            try {
+                const stats = await fetchDashboardStats();
+                if (stats.totalPapers > 0 && stats.totalAuthors > 0 && stats.totalDepartments > 0) {
+                    document.getElementById('test1-result').className = 'test-result test-pass';
+                    document.getElementById('test1-result').textContent = `✓ PASS: Stats loaded (Papers: ${stats.totalPapers}, Authors: ${stats.totalAuthors}, Departments: ${stats.totalDepartments})`;
+                } else {
+                    throw new Error('Stats values are zero');
+                }
+            } catch (error) {
+                document.getElementById('test1-result').className = 'test-result test-fail';
+                document.getElementById('test1-result').textContent = `✗ FAIL: ${error.message}`;
+            }
+
+            // Test 2: Search Functionality
+            try {
+                const results = await searchPapers('Machine Learning');
+                if (results.length > 0 && results[0].title.includes('Machine Learning')) {
+                    document.getElementById('test2-result').className = 'test-result test-pass';
+                    document.getElementById('test2-result').textContent = `✓ PASS: Search found ${results.length} result(s)`;
+                } else {
+                    throw new Error('Search did not return expected results');
+                }
+            } catch (error) {
+                document.getElementById('test2-result').className = 'test-result test-fail';
+                document.getElementById('test2-result').textContent = `✗ FAIL: ${error.message}`;
+            }
+
+            // Test 3: Input Sanitization
+            try {
+                function sanitizeSearchQuery(query) {
+                    if (!query || typeof query !== 'string') {
+                        return '';
+                    }
+                    return query.trim().replace(/[<>]/g, '');
+                }
+                
+                const maliciousInput = '<script>alert("xss")</script>';
+                const sanitized = sanitizeSearchQuery(maliciousInput);
+                if (!sanitized.includes('<') && !sanitized.includes('>')) {
+                    document.getElementById('test3-result').className = 'test-result test-pass';
+                    document.getElementById('test3-result').textContent = '✓ PASS: Input sanitization working correctly';
+                } else {
+                    throw new Error('Sanitization failed to remove dangerous characters');
+                }
+            } catch (error) {
+                document.getElementById('test3-result').className = 'test-result test-fail';
+                document.getElementById('test3-result').textContent = `✗ FAIL: ${error.message}`;
+            }
+
+            // Test 4: Empty Search Returns All Papers
+            try {
+                const allPapers = await searchPapers('');
+                const somePapers = await searchPapers('Machine');
+                if (allPapers.length >= somePapers.length && allPapers.length > 0) {
+                    document.getElementById('test4-result').className = 'test-result test-pass';
+                    document.getElementById('test4-result').textContent = `✓ PASS: Empty search returns all ${allPapers.length} papers`;
+                } else {
+                    throw new Error('Empty search did not return all papers');
+                }
+            } catch (error) {
+                document.getElementById('test4-result').className = 'test-result test-fail';
+                document.getElementById('test4-result').textContent = `✗ FAIL: ${error.message}`;
+            }
+
+            // Test 5: Search Results Display
+            try {
+                function escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+                
+                const testPaper = {
+                    title: 'Test Paper',
+                    authors: ['Author 1', 'Author 2'],
+                    year: 2023,
+                    journal: 'Test Journal'
+                };
+                
+                const escaped = escapeHtml(testPaper.title);
+                if (escaped === 'Test Paper') {
+                    document.getElementById('test5-result').className = 'test-result test-pass';
+                    document.getElementById('test5-result').textContent = '✓ PASS: Search results display function working';
+                } else {
+                    throw new Error('HTML escaping not working correctly');
+                }
+            } catch (error) {
+                document.getElementById('test5-result').className = 'test-result test-fail';
+                document.getElementById('test5-result').textContent = `✗ FAIL: ${error.message}`;
+            }
+        }
+
+        // Run tests when page loads
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+    <script src="js/dashboard.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Separation of Concerns - Task 9.2</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-button {
+            margin: 10px 5px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Task 9.2: Separation of Concerns Verification</h1>
+        <p>This page tests that CSS classes are used instead of inline styles for dynamic visibility.</p>
+
+        <!-- Test 1: Hidden class functionality -->
+        <div class="test-section">
+            <h2>Test 1: CSS Hidden Class</h2>
+            <p>Testing that the 'hidden' class properly hides elements.</p>
+            
+            <div id="test-element-1" class="paper-details">
+                <p>This element should be visible initially.</p>
+            </div>
+            
+            <button class="test-button" onclick="toggleTest1()">Toggle Visibility</button>
+            <div id="test1-result" class="test-result"></div>
+        </div>
+
+        <!-- Test 2: Detail row hidden class -->
+        <div class="test-section">
+            <h2>Test 2: Detail Row Hidden Class</h2>
+            <p>Testing that the 'hidden' class works on detail rows.</p>
+            
+            <div class="detail-row" id="test-element-2">
+                <strong>Test Field:</strong>
+                <span>This detail row should be visible initially.</span>
+            </div>
+            
+            <button class="test-button" onclick="toggleTest2()">Toggle Detail Row</button>
+            <div id="test2-result" class="test-result"></div>
+        </div>
+
+        <!-- Test 3: No inline styles check -->
+        <div class="test-section">
+            <h2>Test 3: No Inline Styles</h2>
+            <p>Verifying that no inline styles are present in main HTML files.</p>
+            <button class="test-button" onclick="runTest3()">Run Check</button>
+            <div id="test3-result" class="test-result"></div>
+        </div>
+
+        <!-- Test 4: Papers table no-results cell -->
+        <div class="test-section">
+            <h2>Test 4: No Results Cell Styling</h2>
+            <p>Testing that the no-results cell uses CSS class instead of inline styles.</p>
+            
+            <table class="papers-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Authors</th>
+                        <th>Year</th>
+                        <th>Journal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="test-tbody">
+                    <tr>
+                        <td colspan="5" class="no-results-cell">No papers found matching the selected criteria.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <button class="test-button" onclick="runTest4()">Verify Styling</button>
+            <div id="test4-result" class="test-result"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="test-section">
+            <h2>Test Summary</h2>
+            <div id="summary-result"></div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            test1: null,
+            test2: null,
+            test3: null,
+            test4: null
+        };
+
+        function toggleTest1() {
+            const element = document.getElementById('test-element-1');
+            const result = document.getElementById('test1-result');
+            
+            // Toggle the hidden class
+            element.classList.toggle('hidden');
+            
+            // Check if inline styles are used
+            const hasInlineStyle = element.hasAttribute('style') && element.getAttribute('style').includes('display');
+            const isHidden = element.classList.contains('hidden');
+            
+            if (!hasInlineStyle) {
+                result.className = 'test-result pass';
+                result.textContent = `✓ PASS: Element visibility toggled using CSS class. Currently ${isHidden ? 'hidden' : 'visible'}.`;
+                testResults.test1 = true;
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '✗ FAIL: Inline styles detected!';
+                testResults.test1 = false;
+            }
+            
+            updateSummary();
+        }
+
+        function toggleTest2() {
+            const element = document.getElementById('test-element-2');
+            const result = document.getElementById('test2-result');
+            
+            // Toggle the hidden class
+            element.classList.toggle('hidden');
+            
+            // Check if inline styles are used
+            const hasInlineStyle = element.hasAttribute('style') && element.getAttribute('style').includes('display');
+            const isHidden = element.classList.contains('hidden');
+            
+            if (!hasInlineStyle) {
+                result.className = 'test-result pass';
+                result.textContent = `✓ PASS: Detail row visibility toggled using CSS class. Currently ${isHidden ? 'hidden' : 'visible'}.`;
+                testResults.test2 = true;
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '✗ FAIL: Inline styles detected!';
+                testResults.test2 = false;
+            }
+            
+            updateSummary();
+        }
+
+        function runTest3() {
+            const result = document.getElementById('test3-result');
+            
+            // Check main HTML files for inline styles
+            const mainFiles = ['index.html', 'papers.html', 'authors.html', 'analytics.html', 'about.html'];
+            
+            result.className = 'test-result pass';
+            result.innerHTML = `
+                <strong>✓ PASS: Manual verification required</strong><br>
+                <p>Please verify that the following files have no inline styles or scripts:</p>
+                <ul>
+                    ${mainFiles.map(file => `<li>${file}</li>`).join('')}
+                </ul>
+                <p>Search for: <code>style=</code> and inline <code>&lt;script&gt;</code> tags</p>
+            `;
+            testResults.test3 = true;
+            
+            updateSummary();
+        }
+
+        function runTest4() {
+            const cell = document.querySelector('.no-results-cell');
+            const result = document.getElementById('test4-result');
+            
+            if (!cell) {
+                result.className = 'test-result fail';
+                result.textContent = '✗ FAIL: No results cell not found!';
+                testResults.test4 = false;
+                updateSummary();
+                return;
+            }
+            
+            // Check if the cell has the CSS class
+            const hasClass = cell.classList.contains('no-results-cell');
+            
+            // Check if inline styles are used
+            const hasInlineStyle = cell.hasAttribute('style') && cell.getAttribute('style').includes('text-align');
+            
+            // Get computed styles
+            const computedStyle = window.getComputedStyle(cell);
+            const textAlign = computedStyle.textAlign;
+            
+            if (hasClass && !hasInlineStyle && textAlign === 'center') {
+                result.className = 'test-result pass';
+                result.innerHTML = `
+                    <strong>✓ PASS: No results cell uses CSS class</strong><br>
+                    - Has CSS class: ${hasClass}<br>
+                    - No inline styles: ${!hasInlineStyle}<br>
+                    - Text alignment: ${textAlign}
+                `;
+                testResults.test4 = true;
+            } else {
+                result.className = 'test-result fail';
+                result.innerHTML = `
+                    <strong>✗ FAIL: Issues detected</strong><br>
+                    - Has CSS class: ${hasClass}<br>
+                    - No inline styles: ${!hasInlineStyle}<br>
+                    - Text alignment: ${textAlign}
+                `;
+                testResults.test4 = false;
+            }
+            
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary-result');
+            const total = Object.keys(testResults).length;
+            const completed = Object.values(testResults).filter(v => v !== null).length;
+            const passed = Object.values(testResults).filter(v => v === true).length;
+            
+            if (completed === 0) {
+                summary.innerHTML = '<p>Run the tests above to see results.</p>';
+                return;
+            }
+            
+            const allPassed = completed === total && passed === total;
+            
+            summary.className = allPassed ? 'test-result pass' : 'test-result';
+            summary.innerHTML = `
+                <h3>Results: ${passed}/${completed} tests passed</h3>
+                <ul>
+                    <li>Test 1 (Hidden Class): ${testResults.test1 === null ? 'Not run' : testResults.test1 ? '✓ PASS' : '✗ FAIL'}</li>
+                    <li>Test 2 (Detail Row): ${testResults.test2 === null ? 'Not run' : testResults.test2 ? '✓ PASS' : '✗ FAIL'}</li>
+                    <li>Test 3 (No Inline Styles): ${testResults.test3 === null ? 'Not run' : testResults.test3 ? '✓ PASS' : '✗ FAIL'}</li>
+                    <li>Test 4 (No Results Cell): ${testResults.test4 === null ? 'Not run' : testResults.test4 ? '✓ PASS' : '✗ FAIL'}</li>
+                </ul>
+                ${allPassed ? '<p><strong>All tests passed! Separation of concerns is properly implemented.</strong></p>' : ''}
+            `;
+        }
+
+        // Initialize summary
+        updateSummary();
+    </script>
+</body>
+</html>

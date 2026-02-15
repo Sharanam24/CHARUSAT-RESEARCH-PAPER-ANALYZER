@@ -1,0 +1,288 @@
+{
+  "info": {
+    "name": "CHARUSAT Research Analyzer API",
+    "description": "Complete API collection for testing CHARUSAT Research Analyzer backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Root - API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Papers",
+      "item": [
+        {
+          "name": "Get All Papers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/papers?limit=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Papers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/papers/search?q=machine learning",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "machine learning"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Papers by Year",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/papers/filter?year=2023",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "filter"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Papers by Department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/papers/filter?department=Computer Science",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "filter"],
+              "query": [
+                {
+                  "key": "department",
+                  "value": "Computer Science"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Papers by Author",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/papers/filter?author=John Smith",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "filter"],
+              "query": [
+                {
+                  "key": "author",
+                  "value": "John Smith"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Fetch Papers from Semantic Scholar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"CHARUSAT\",\n  \"limit\": 10,\n  \"source\": \"semantic_scholar\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/papers/fetch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "fetch"]
+            }
+          }
+        },
+        {
+          "name": "Fetch Papers from CrossRef",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"CHARUSAT\",\n  \"limit\": 10,\n  \"source\": \"crossref\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/papers/fetch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "papers", "fetch"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authors",
+      "item": [
+        {
+          "name": "Get All Authors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/authors",
+              "host": ["{{base_url}}"],
+              "path": ["api", "authors"]
+            }
+          }
+        },
+        {
+          "name": "Detect Duplicate Authors (AI/ML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/authors/duplicates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "authors", "duplicates"]
+            }
+          }
+        },
+        {
+          "name": "Get Author Groups",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/authors/groups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "authors", "groups"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "dashboard", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Analytics Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics"]
+            }
+          }
+        },
+        {
+          "name": "Get Analytics Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Years",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/filters/years",
+              "host": ["{{base_url}}"],
+              "path": ["api", "filters", "years"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/filters/departments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "filters", "departments"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

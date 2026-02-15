@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and filter research papers from CHARUSAT University">
+    <title>CHARUSAT Research Analyzer - Papers</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="images/charusat-logo.png" alt="CHARUSAT Logo" class="logo-img">
+                <span>CHARUSAT Research Analyzer</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="papers.html" class="active">Papers</a></li>
+                <li><a href="authors.html">Authors</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="page-header">
+            <h1>Research Papers</h1>
+            <p>Browse and filter research papers by various criteria</p>
+        </header>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <h2 class="section-title">Filter Papers</h2>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="year-filter">Year:</label>
+                    <select id="year-filter" aria-label="Filter by year">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="department-filter">Department:</label>
+                    <select id="department-filter" aria-label="Filter by department">
+                        <option value="">All Departments</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="author-filter">Author:</label>
+                    <select id="author-filter" aria-label="Filter by author">
+                        <option value="">All Authors</option>
+                    </select>
+                </div>
+                <button id="apply-filters" type="button">Apply Filters</button>
+            </div>
+        </section>
+
+        <!-- Papers Table Section -->
+        <section class="papers-section">
+            <h2 class="section-title">Papers List</h2>
+            <div class="table-container">
+                <table class="papers-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Authors</th>
+                            <th>Year</th>
+                            <th>Journal</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="papers-tbody">
+                        <!-- Rows populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Paper Details Section (Initially Hidden) -->
+        <section id="paper-details" class="paper-details hidden">
+            <h2 class="section-title">Paper Details</h2>
+            <article class="paper-detail-content">
+                <h3 id="detail-title"></h3>
+                <div class="detail-row">
+                    <strong>Authors:</strong>
+                    <span id="detail-authors"></span>
+                </div>
+                <div class="detail-row">
+                    <strong>Year:</strong>
+                    <span id="detail-year"></span>
+                </div>
+                <div class="detail-row">
+                    <strong>Journal:</strong>
+                    <span id="detail-journal"></span>
+                </div>
+                <div class="detail-row">
+                    <strong>Department:</strong>
+                    <span id="detail-department"></span>
+                </div>
+                <div class="detail-row hidden" id="detail-abstract-row">
+                    <strong>Abstract:</strong>
+                    <p id="detail-abstract"></p>
+                </div>
+                <button id="close-details" type="button">Close</button>
+            </article>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2024 CHARUSAT University. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js" defer></script>
+    <script src="js/papers.js" defer></script>
+</body>
+</html>

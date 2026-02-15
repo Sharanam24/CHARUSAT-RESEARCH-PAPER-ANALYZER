@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authors Display</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .test-info {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>Task 6.1 Verification: Authors.html Display Structure</h2>
+        <p><strong>Testing:</strong> Author groups display with similarity scores</p>
+        <p><strong>Requirements:</strong> 4.1, 9.3</p>
+    </div>
+
+    <main class="main-content">
+        <header class="page-header">
+            <h1>Duplicate Author Analyzer</h1>
+            <p>AI/ML-powered detection of author name variations</p>
+        </header>
+
+        <section class="author-groups-section">
+            <h2 class="section-title">Detected Author Groups</h2>
+            <div class="author-groups-container" id="author-groups-container">
+                <!-- Author groups will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api.js" defer></script>
+    <script defer>
+        // Test the author groups display
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Testing author groups display...');
+            
+            try {
+                // Fetch author groups (will use mock data)
+                const groups = await fetchAuthorGroups();
+                console.log('Fetched author groups:', groups);
+                
+                // Render the groups
+                renderAuthorGroups(groups);
+                console.log('Author groups rendered successfully!');
+                
+                // Verify the structure
+                const container = document.getElementById('author-groups-container');
+                const groupElements = container.querySelectorAll('.author-group');
+                
+                console.log(`✓ Found ${groupElements.length} author groups`);
+                
+                groupElements.forEach((group, index) => {
+                    const header = group.querySelector('.group-header');
+                    const status = group.querySelector('.group-status');
+                    const variations = group.querySelectorAll('.author-variations li');
+                    
+                    console.log(`\nGroup ${index + 1}:`);
+                    console.log(`  - Header: ${header?.textContent}`);
+                    console.log(`  - Status: ${status?.textContent}`);
+                    console.log(`  - Variations: ${variations.length}`);
+                    
+                    variations.forEach((variation, vIndex) => {
+                        const name = variation.querySelector('.author-name')?.textContent;
+                        const score = variation.querySelector('.similarity-score')?.textContent;
+                        console.log(`    ${vIndex + 1}. ${name} - ${score}`);
+                    });
+                });
+                
+                // Verify semantic HTML usage
+                const semanticTags = {
+                    'main': document.querySelector('main'),
+                    'header': document.querySelector('header'),
+                    'section': document.querySelector('section'),
+                    'article': document.querySelectorAll('article')
+                };
+                
+                console.log('\n✓ Semantic HTML5 tags verification:');
+                console.log(`  - <main>: ${semanticTags.main ? 'Present' : 'Missing'}`);
+                console.log(`  - <header>: ${semanticTags.header ? 'Present' : 'Missing'}`);
+                console.log(`  - <section>: ${semanticTags.section ? 'Present' : 'Missing'}`);
+                console.log(`  - <article>: ${semanticTags.article.length} elements`);
+                
+            } catch (error) {
+                console.error('Error during test:', error);
+            }
+        });
+        
+        // Copy the renderAuthorGroups function from authors.js
+        function renderAuthorGroups(groups) {
+            const container = document.getElementById('author-groups-container');
+            
+            if (!container) {
+                console.warn('Author groups container not found');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            if (groups.length === 0) {
+                container.innerHTML = '<p class="no-groups">No author groups detected yet.</p>';
+                return;
+            }
+            
+            groups.forEach((group, index) => {
+                const groupElement = createAuthorGroupElement(group, index + 1);
+                container.appendChild(groupElement);
+            });
+        }
+        
+        function createAuthorGroupElement(group, groupNumber) {
+            const groupDiv = document.createElement('article');
+            groupDiv.className = 'author-group';
+            
+            const header = document.createElement('h3');
+            header.className = 'group-header';
+            header.textContent = `Author Group ${groupNumber}`;
+            groupDiv.appendChild(header);
+            
+            const primaryName = document.createElement('p');
+            primaryName.className = 'primary-name';
+            primaryName.innerHTML = `<strong>Primary Name:</strong> ${escapeHtml(group.primaryName)}`;
+            groupDiv.appendChild(primaryName);
+            
+            const status = document.createElement('p');
+            status.className = 'group-status';
+            status.textContent = group.status || 'Identified as same author';
+            groupDiv.appendChild(status);
+            
+            const variationsList = document.createElement('ul');
+            variationsList.className = 'author-variations';
+            
+            group.variations.forEach(variation => {
+                const listItem = document.createElement('li');
+                listItem.className = 'variation-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'author-name';
+                nameSpan.textContent = variation.name;
+                
+                const scoreSpan = document.createElement('span');
+                scoreSpan.className = 'similarity-score';
+                scoreSpan.textContent = `${variation.similarityScore}%`;
+                
+                listItem.appendChild(nameSpan);
+                listItem.appendChild(scoreSpan);
+                variationsList.appendChild(listItem);
+            });
+            
+            groupDiv.appendChild(variationsList);
+            
+            return groupDiv;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Test - CHARUSAT Research Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0B3C5D;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #0B3C5D;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #328CC1;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 Frontend-Backend Integration Test</h1>
+    <p>This page tests the connection between your frontend and backend.</p>
+
+    <div class="test-section">
+        <h2>Backend Status</h2>
+        <button onclick="testBackendHealth()">Test Backend Connection</button>
+        <div id="backend-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>API Endpoints Test</h2>
+        <button onclick="testAllEndpoints()">Test All Endpoints</button>
+        <div id="endpoints-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Dashboard Stats</h2>
+        <button onclick="testDashboardStats()">Test Dashboard</button>
+        <div id="dashboard-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Papers API</h2>
+        <button onclick="testPapersAPI()">Test Papers</button>
+        <div id="papers-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Authors API (AI/ML)</h2>
+        <button onclick="testAuthorsAPI()">Test Duplicate Detection</button>
+        <div id="authors-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Analytics API</h2>
+        <button onclick="testAnalyticsAPI()">Test Analytics</button>
+        <div id="analytics-status"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+
+        function showLoading(elementId) {
+            document.getElementById(elementId).innerHTML = '<p class="loading">Testing...</p>';
+        }
+
+        function showSuccess(elementId, message, data = null) {
+            let html = `<div class="test-result success">✅ ${message}</div>`;
+            if (data) {
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        function showError(elementId, message, error = null) {
+            let html = `<div class="test-result error">❌ ${message}</div>`;
+            if (error) {
+                html += `<pre>${error}</pre>`;
+            }
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        function showInfo(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="test-result info">ℹ️ ${message}</div>`;
+        }
+
+        async function testBackendHealth() {
+            showLoading('backend-status');
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                showSuccess('backend-status', 'Backend is running!', data);
+            } catch (error) {
+                showError('backend-status', 'Backend is not running or not accessible', error.message);
+                showInfo('backend-status', 'Make sure to start backend: cd backend && python main.py');
+            }
+        }
+
+        async function testAllEndpoints() {
+            showLoading('endpoints-status');
+            const endpoints = [
+                '/health',
+                '/api/papers',
+                '/api/authors',
+                '/api/authors/duplicates',
+                '/api/dashboard/stats',
+                '/api/analytics'
+            ];
+
+            let results = '<h3>Endpoint Status:</h3>';
+            let allSuccess = true;
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    if (response.ok) {
+                        results += `<div class="test-result success">✅ ${endpoint}</div>`;
+                    } else {
+                        results += `<div class="test-result error">❌ ${endpoint} (HTTP ${response.status})</div>`;
+                        allSuccess = false;
+                    }
+                } catch (error) {
+                    results += `<div class="test-result error">❌ ${endpoint} (${error.message})</div>`;
+                    allSuccess = false;
+                }
+            }
+
+            document.getElementById('endpoints-status').innerHTML = results;
+            
+            if (allSuccess) {
+                document.getElementById('endpoints-status').innerHTML += 
+                    '<div class="test-result success">✅ All endpoints are working!</div>';
+            }
+        }
+
+        async function testDashboardStats() {
+            showLoading('dashboard-status');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                
+                let html = '<div class="test-result success">✅ Dashboard stats loaded successfully!</div>';
+                html += `<div style="margin: 10px 0;">
+                    <strong>Total Papers:</strong> ${data.totalPapers}<br>
+                    <strong>Total Authors:</strong> ${data.totalAuthors}<br>
+                    <strong>Total Departments:</strong> ${data.totalDepartments}
+                </div>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                
+                document.getElementById('dashboard-status').innerHTML = html;
+            } catch (error) {
+                showError('dashboard-status', 'Failed to load dashboard stats', error.message);
+            }
+        }
+
+        async function testPapersAPI() {
+            showLoading('papers-status');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/papers`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                
+                let html = `<div class="test-result success">✅ Loaded ${data.length} papers!</div>`;
+                
+                if (data.length > 0) {
+                    html += '<h4>Sample Paper:</h4>';
+                    html += `<pre>${JSON.stringify(data[0], null, 2)}</pre>`;
+                }
+                
+                document.getElementById('papers-status').innerHTML = html;
+            } catch (error) {
+                showError('papers-status', 'Failed to load papers', error.message);
+            }
+        }
+
+        async function testAuthorsAPI() {
+            showLoading('authors-status');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/authors/duplicates`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                
+                let html = `<div class="test-result success">✅ AI/ML Duplicate Detection Working!</div>`;
+                html += `<div style="margin: 10px 0;"><strong>Found ${data.length} author groups</strong></div>`;
+                
+                if (data.length > 0) {
+                    html += '<h4>Sample Author Group:</h4>';
+                    const group = data[0];
+                    html += `<div style="margin: 10px 0;">
+                        <strong>Primary Name:</strong> ${group.primaryName}<br>
+                        <strong>Status:</strong> ${group.status}<br>
+                        <strong>Variations:</strong>
+                        <ul>`;
+                    group.variations.forEach(v => {
+                        html += `<li>${v.name} (${v.similarityScore}% similarity)</li>`;
+                    });
+                    html += `</ul></div>`;
+                    html += `<pre>${JSON.stringify(group, null, 2)}</pre>`;
+                }
+                
+                document.getElementById('authors-status').innerHTML = html;
+            } catch (error) {
+                showError('authors-status', 'Failed to load author groups', error.message);
+            }
+        }
+
+        async function testAnalyticsAPI() {
+            showLoading('analytics-status');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/analytics`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                
+                let html = '<div class="test-result success">✅ Analytics data loaded successfully!</div>';
+                html += '<h4>Publications by Year:</h4>';
+                html += '<ul>';
+                data.publicationsByYear.forEach(item => {
+                    html += `<li>${item.year}: ${item.count} papers</li>`;
+                });
+                html += '</ul>';
+                
+                html += '<h4>Department Counts:</h4>';
+                html += '<ul>';
+                data.departmentCounts.forEach(item => {
+                    html += `<li>${item.department}: ${item.count} papers</li>`;
+                });
+                html += '</ul>';
+                
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                
+                document.getElementById('analytics-status').innerHTML = html;
+            } catch (error) {
+                showError('analytics-status', 'Failed to load analytics', error.message);
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            testBackendHealth();
+        });
+    </script>
+</body>
+</html>

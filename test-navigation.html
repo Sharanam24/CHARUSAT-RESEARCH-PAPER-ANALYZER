@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test - CHARUSAT Research Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0B3C5D;
+            border-bottom: 3px solid #328CC1;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #328CC1;
+            margin-top: 30px;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #328CC1;
+        }
+        .pass {
+            border-left-color: #4CAF50;
+        }
+        .fail {
+            border-left-color: #f44336;
+        }
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .status.pass {
+            background: #4CAF50;
+            color: white;
+        }
+        .status.fail {
+            background: #f44336;
+            color: white;
+        }
+        .status.pending {
+            background: #ff9800;
+            color: white;
+        }
+        button {
+            background: #0B3C5D;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #328CC1;
+        }
+        .test-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .checklist input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #0B3C5D;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .summary {
+            background: #0B3C5D;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .summary h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Navigation Testing Suite - CHARUSAT Research Analyzer</h1>
+    
+    <div class="summary">
+        <h3>Test Summary</h3>
+        <p><strong>Task:</strong> 11.1 Test navigation between all pages</p>
+        <p><strong>Requirements:</strong> 1.1 - Navigation bar with links to all pages</p>
+        <p><strong>Objective:</strong> Verify all navigation links work correctly, active page highlighting, and consistent navigation experience</p>
+    </div>
+
+    <div class="instructions">
+        <h3>📋 Testing Instructions</h3>
+        <p>This test suite verifies the navigation functionality across all pages of the CHARUSAT Research Analyzer. Follow the steps below:</p>
+        <ol>
+            <li>Use the quick links below to navigate to each page</li>
+            <li>On each page, verify the navigation bar is present and consistent</li>
+            <li>Check that the current page is highlighted in the navigation</li>
+            <li>Test all navigation links from each page</li>
+            <li>Check the checklist items as you complete each test</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Quick Navigation Links</h2>
+        <div class="test-links">
+            <button onclick="window.open('index.html', '_blank')">Open Home Page</button>
+            <button onclick="window.open('papers.html', '_blank')">Open Papers Page</button>
+            <button onclick="window.open('authors.html', '_blank')">Open Authors Page</button>
+            <button onclick="window.open('analytics.html', '_blank')">Open Analytics Page</button>
+            <button onclick="window.open('about.html', '_blank')">Open About Page</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ Test Checklist</h2>
+        <ul class="checklist">
+            <li>
+                <input type="checkbox" id="test1">
+                <label for="test1"><strong>Test 1.1:</strong> Navigation bar is present on all 5 pages (Home, Papers, Authors, Analytics, About)</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test2">
+                <label for="test2"><strong>Test 1.2:</strong> Navigation bar has consistent styling across all pages</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test3">
+                <label for="test3"><strong>Test 1.3:</strong> Logo "CHARUSAT Research Analyzer" is displayed on all pages</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test4">
+                <label for="test4"><strong>Test 2.1:</strong> All 5 navigation links are present on each page</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test5">
+                <label for="test5"><strong>Test 2.2:</strong> Navigation links are in correct order: Home, Papers, Authors, Analytics, About</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test6">
+                <label for="test6"><strong>Test 3.1:</strong> On Home page (index.html), "Home" link has "active" class</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test7">
+                <label for="test7"><strong>Test 3.2:</strong> On Papers page, "Papers" link has "active" class</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test8">
+                <label for="test8"><strong>Test 3.3:</strong> On Authors page, "Authors" link has "active" class</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test9">
+                <label for="test9"><strong>Test 3.4:</strong> On Analytics page, "Analytics" link has "active" class</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test10">
+                <label for="test10"><strong>Test 3.5:</strong> On About page, "About" link has "active" class</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test11">
+                <label for="test11"><strong>Test 4.1:</strong> Active navigation link has light blue background (#328CC1)</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test12">
+                <label for="test12"><strong>Test 4.2:</strong> Hovering over non-active links shows light blue background</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test13">
+                <label for="test13"><strong>Test 5.1:</strong> Clicking "Home" link from any page navigates to index.html</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test14">
+                <label for="test14"><strong>Test 5.2:</strong> Clicking "Papers" link from any page navigates to papers.html</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test15">
+                <label for="test15"><strong>Test 5.3:</strong> Clicking "Authors" link from any page navigates to authors.html</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test16">
+                <label for="test16"><strong>Test 5.4:</strong> Clicking "Analytics" link from any page navigates to analytics.html</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test17">
+                <label for="test17"><strong>Test 5.5:</strong> Clicking "About" link from any page navigates to about.html</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test18">
+                <label for="test18"><strong>Test 6.1:</strong> Navigation is responsive on tablet size (768px width)</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test19">
+                <label for="test19"><strong>Test 6.2:</strong> All navigation links are accessible via keyboard (Tab key)</label>
+            </li>
+            <li>
+                <input type="checkbox" id="test20">
+                <label for="test20"><strong>Test 6.3:</strong> Navigation maintains consistent position across all pages</label>
+            </li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Navigation Link Matrix</h2>
+        <p>Verify that each navigation link works correctly from every page:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>From Page</th>
+                    <th>To Home</th>
+                    <th>To Papers</th>
+                    <th>To Authors</th>
+                    <th>To Analytics</th>
+                    <th>To About</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Home (index.html)</strong></td>
+                    <td>✓ (Active)</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+                <tr>
+                    <td><strong>Papers (papers.html)</strong></td>
+                    <td>Test</td>
+                    <td>✓ (Active)</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+                <tr>
+                    <td><strong>Authors (authors.html)</strong></td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>✓ (Active)</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+                <tr>
+                    <td><strong>Analytics (analytics.html)</strong></td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>✓ (Active)</td>
+                    <td>Test</td>
+                </tr>
+                <tr>
+                    <td><strong>About (about.html)</strong></td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>✓ (Active)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h2>🎨 Visual Verification</h2>
+        <div class="test-item">
+            <h3>Navigation Bar Styling</h3>
+            <ul>
+                <li><strong>Background Color:</strong> Dark Blue (#0B3C5D)</li>
+                <li><strong>Text Color:</strong> White</li>
+                <li><strong>Active Link Background:</strong> Light Blue (#328CC1)</li>
+                <li><strong>Hover Effect:</strong> Light Blue (#328CC1) background</li>
+                <li><strong>Font:</strong> Roboto or Arial (sans-serif)</li>
+            </ul>
+        </div>
+        <div class="test-item">
+            <h3>Navigation Structure</h3>
+            <ul>
+                <li><strong>Layout:</strong> Flexbox with space-between alignment</li>
+                <li><strong>Logo Position:</strong> Left side</li>
+                <li><strong>Links Position:</strong> Right side</li>
+                <li><strong>Responsive Behavior:</strong> Stacks vertically on tablet (≤768px)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Detailed Test Cases</h2>
+        
+        <div class="test-item">
+            <h3>Test Case 1: Navigation Presence</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open each page (Home, Papers, Authors, Analytics, About)</li>
+                <li>Verify navigation bar is present at the top</li>
+                <li>Verify all 5 links are visible</li>
+            </ol>
+            <p><strong>Expected Result:</strong> Navigation bar with all 5 links is present on every page</p>
+        </div>
+
+        <div class="test-item">
+            <h3>Test Case 2: Active Page Highlighting</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open Home page - verify "Home" link has light blue background</li>
+                <li>Open Papers page - verify "Papers" link has light blue background</li>
+                <li>Open Authors page - verify "Authors" link has light blue background</li>
+                <li>Open Analytics page - verify "Analytics" link has light blue background</li>
+                <li>Open About page - verify "About" link has light blue background</li>
+            </ol>
+            <p><strong>Expected Result:</strong> Current page link is highlighted with class="active" and light blue background</p>
+        </div>
+
+        <div class="test-item">
+            <h3>Test Case 3: Navigation Functionality</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Start on Home page</li>
+                <li>Click "Papers" link - verify navigation to papers.html</li>
+                <li>Click "Authors" link - verify navigation to authors.html</li>
+                <li>Click "Analytics" link - verify navigation to analytics.html</li>
+                <li>Click "About" link - verify navigation to about.html</li>
+                <li>Click "Home" link - verify navigation back to index.html</li>
+            </ol>
+            <p><strong>Expected Result:</strong> All navigation links work correctly and navigate to the correct pages</p>
+        </div>
+
+        <div class="test-item">
+            <h3>Test Case 4: Hover Effects</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open any page</li>
+                <li>Hover over each non-active navigation link</li>
+                <li>Verify light blue background appears on hover</li>
+                <li>Verify hover effect has smooth transition</li>
+            </ol>
+            <p><strong>Expected Result:</strong> Non-active links show light blue background on hover with smooth transition</p>
+        </div>
+
+        <div class="test-item">
+            <h3>Test Case 5: Responsive Navigation</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open any page in browser</li>
+                <li>Resize browser window to 768px width or less</li>
+                <li>Verify navigation adapts to smaller screen</li>
+                <li>Verify all links remain accessible</li>
+            </ol>
+            <p><strong>Expected Result:</strong> Navigation adjusts layout for tablet/mobile screens while maintaining functionality</p>
+        </div>
+
+        <div class="test-item">
+            <h3>Test Case 6: Keyboard Navigation</h3>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open any page</li>
+                <li>Press Tab key repeatedly</li>
+                <li>Verify focus moves through navigation links</li>
+                <li>Press Enter on a focused link</li>
+                <li>Verify navigation occurs</li>
+            </ol>
+            <p><strong>Expected Result:</strong> All navigation links are keyboard accessible and functional</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Test Results Summary</h2>
+        <div id="results-summary">
+            <p>Check off items in the checklist above as you complete each test. All tests should pass for task 11.1 to be considered complete.</p>
+            <button onclick="calculateResults()">Calculate Test Results</button>
+            <div id="results-output" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateResults() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = ((checked / total) * 100).toFixed(1);
+            
+            const output = document.getElementById('results-output');
+            let statusClass = 'fail';
+            let statusText = 'FAILED';
+            
+            if (percentage === 100) {
+                statusClass = 'pass';
+                statusText = 'PASSED';
+            } else if (percentage >= 80) {
+                statusClass = 'pending';
+                statusText = 'NEEDS ATTENTION';
+            }
+            
+            output.innerHTML = `
+                <div class="test-item ${statusClass}">
+                    <h3>Test Results <span class="status ${statusClass}">${statusText}</span></h3>
+                    <p><strong>Tests Passed:</strong> ${checked} / ${total}</p>
+                    <p><strong>Success Rate:</strong> ${percentage}%</p>
+                    ${percentage === 100 ? 
+                        '<p style="color: #4CAF50; font-weight: bold;">✅ All navigation tests passed! Task 11.1 is complete.</p>' : 
+                        '<p style="color: #f44336; font-weight: bold;">⚠️ Some tests failed. Please review and fix issues before completing task 11.1.</p>'
+                    }
+                </div>
+            `;
+        }
+
+        // Auto-save checkbox state
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach((checkbox, index) => {
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(`nav-test-${index}`, this.checked);
+            });
+            
+            // Restore state
+            const saved = localStorage.getItem(`nav-test-${index}`);
+            if (saved === 'true') {
+                checkbox.checked = true;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Research analytics and visualizations for CHARUSAT University">
+    <title>CHARUSAT Research Analyzer - Analytics</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="images/charusat-logo.png" alt="CHARUSAT Logo" class="logo-img">
+                <span>CHARUSAT Research Analyzer</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="papers.html">Papers</a></li>
+                <li><a href="authors.html">Authors</a></li>
+                <li><a href="analytics.html" class="active">Analytics</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="page-header">
+            <h1>Research Analytics</h1>
+            <p>Visual insights into research trends and productivity</p>
+        </header>
+
+        <!-- Analytics Charts Container -->
+        <section class="analytics-container">
+            <!-- Publications by Year Chart -->
+            <article class="chart-section">
+                <h2>Publications by Year</h2>
+                <div class="chart-wrapper">
+                    <canvas id="publications-chart" class="chart-canvas"></canvas>
+                </div>
+            </article>
+
+            <!-- Top Research Domains Chart -->
+            <article class="chart-section">
+                <h2>Top Research Domains</h2>
+                <div class="chart-wrapper">
+                    <canvas id="domains-chart" class="chart-canvas"></canvas>
+                </div>
+            </article>
+
+            <!-- Department-wise Paper Count Chart -->
+            <article class="chart-section">
+                <h2>Department-wise Paper Count</h2>
+                <div class="chart-wrapper">
+                    <canvas id="departments-chart" class="chart-canvas"></canvas>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2024 CHARUSAT University. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js" defer></script>
+    <script src="js/analytics.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CHARUSAT Research Analyzer - A research analysis portal for CHARUSAT University">
+    <title>CHARUSAT Research Analyzer - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="images/charusat-logo.png" alt="CHARUSAT Logo" class="logo-img">
+                <span>CHARUSAT Research Analyzer</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="papers.html">Papers</a></li>
+                <li><a href="authors.html">Authors</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="page-header">
+            <h1>Research Dashboard</h1>
+            <p>Comprehensive research statistics and analytics for CHARUSAT University</p>
+        </header>
+
+        <!-- Dashboard Statistics Cards -->
+        <section class="dashboard-section">
+            <h2 class="section-title">Overview</h2>
+            <div class="dashboard-cards">
+                <article class="card">
+                    <h3 class="card-title">Total Papers</h3>
+                    <p class="card-value" id="total-papers">0</p>
+                </article>
+                <article class="card">
+                    <h3 class="card-title">Total Authors</h3>
+                    <p class="card-value" id="total-authors">0</p>
+                </article>
+                <article class="card">
+                    <h3 class="card-title">Departments</h3>
+                    <p class="card-value" id="total-departments">0</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2 class="section-title">Search Research Papers</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search by title, author, or year..." aria-label="Search papers">
+                <button id="search-button" type="button">Search</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </section>
+
+        <!-- Publications Chart Section -->
+        <section class="chart-section">
+            <h2 class="section-title">Papers Published Per Year</h2>
+            <div class="chart-container">
+                <canvas id="publications-chart" class="chart-canvas"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>&copy; 2024 CHARUSAT University. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</body>
+</html>
